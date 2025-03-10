@@ -4,16 +4,16 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Последние новости</h2>
+    <h2>Новости (всего: {{ news_list|length }})</h2>
+
     <div class="list-group">
         {% for post in news_list %}
         <a href="{% url 'news_detail' post.id %}" class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">{{ post.title }}</h5>
-                <small>{{ post.created_at|date:"d.m.Y H:i" }}</small>
+                <small>{{ post.created_at|date:"d.m.Y" }}</small>
             </div>
-            <p class="mb-1">{{ post.preview }}</p>
-            <small>Рейтинг: {{ post.rating }}</small>
+            <p class="mb-1">{{ post.text|truncatewords:20 }}</p>
         </a>
         {% endfor %}
     </div>
