@@ -1,0 +1,24 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}{{ news.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <article class="card">
+        <div class="card-body">
+            <h2 class="card-title">{{ news.title }}</h2>
+            <p class="text-muted">
+                Опубликовано: {{ news.created_at|date:"d.m.Y H:i" }} |
+                Автор: {{ news.author.user.username }} |
+                Рейтинг: {{ news.rating }}
+            </p>
+            <hr>
+            <p class="card-text">{{ news.text }}</p>
+
+            <div class="mt-4">
+                <a href="/news/" class="btn btn-primary">Назад к списку</a>
+            </div>
+        </div>
+    </article>
+</div>
+{% endblock %}
