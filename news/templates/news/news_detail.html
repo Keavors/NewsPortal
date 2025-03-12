@@ -1,19 +1,18 @@
 {% extends 'flatpages/default.html' %}
-
-{% block title %}{{ news.title }}{% endblock %}
+{% load custom_filters %}
 
 {% block content %}
 <div class="container mt-4">
     <article class="card">
         <div class="card-body">
-            <h1 class="card-title">{{ news.title }}</h1>
+            <h1 class="card-title">{{ news.title|censor }}</h1>
             <p class="text-muted">
                 Опубликовано: {{ news.created_at|date:"d.m.Y" }} |
                 Автор: {{ news.author.user.username }}
             </p>
             <hr>
             <div class="article-content">
-                {{ news.text|linebreaks }}
+                {{ news.text|censor|linebreaks }}
             </div>
         </div>
     </article>

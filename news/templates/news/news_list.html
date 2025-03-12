@@ -1,6 +1,5 @@
 {% extends 'flatpages/default.html' %}
-
-{% block title %}Все новости{% endblock %}
+{% load custom_filters %}
 
 {% block content %}
 <div class="container mt-4">
@@ -10,10 +9,10 @@
         {% for post in news_list %}
         <a href="{% url 'news_detail' post.id %}" class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ post.title }}</h5>
+                <h5 class="mb-1">{{ post.title|censor }}</h5>
                 <small>{{ post.created_at|date:"d.m.Y" }}</small>
             </div>
-            <p class="mb-1">{{ post.text|truncatewords:20 }}</p>
+            <p class="mb-1">{{ post.text|truncatewords:20|censor }}</p>
         </a>
         {% endfor %}
     </div>

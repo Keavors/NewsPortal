@@ -1,23 +1,28 @@
 from django.core.management import BaseCommand
-from news.models import *
-
+from django.contrib.auth.models import User
+from news.models import Author, Post
 
 class Command(BaseCommand):
-    help = "Create test data"
+    help = "Создаёт тестовые новости и статьи"
 
     def handle(self, *args, **options):
-        user = User.objects.create_user(username='testuser')
+        # Создаём пользователя и автора
+        user = User.objects.create_user(username='test_author')
         author = Author.objects.create(user=user)
-        category = Category.objects.create(name='Тестовая категория')
 
-        post = Post.objects.create(
+        # Создаём новости
+        Post.objects.create(
             author=author,
-            post_type='news',
-            title='Тестовая новость',
-            text='Содержание новости'
+            title="Тестовая новость 1",
+            text="Это текст новости 1. Редиска!",
+            post_type='news'
         )
-        post.categories.add(category)
 
-        self.stdout.write("Тестовые данные созданы")
+        Post.objects.create(
+            author=author,
+            title="Тестовая новость 2",
+            text="Это текст новости 2. Хрен!",
+            post_type='news'
+        )
 
-# run: python manage.py create_test_data
+        self.stdout.write(self.style.SUCCESS('Данные созданы!'))
