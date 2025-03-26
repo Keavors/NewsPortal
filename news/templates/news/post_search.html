@@ -1,0 +1,30 @@
+{% extends 'flatpages/default.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Поиск новостей</h2>
+    
+    <form method="get" class="mb-4">
+        <div class="row g-3">
+            {% for field in filterset.form %}
+                <div class="col-md-4">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field|attr:"class:form-control" }}
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Искать</button>
+    </form>
+
+    {% if posts %}
+        <div class="list-group">
+            {% for post in posts %}
+                <!-- Аналогично news_list.html -->
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Новостей не найдено</p>
+    {% endif %}
+</div>
+{% endblock %}
