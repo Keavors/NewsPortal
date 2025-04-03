@@ -5,7 +5,21 @@ from django.core.paginator import Paginator
 from .models import Post, Author
 from .filters import PostFilter
 from .forms import PostForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
+from django.shortcuts import redirect
 
+@login_required
+def become_author(request):
+    author_group = Group.objects.get(name='authors')
+    request.user.groups.add(author_group)
+    return redirect('news_list')
+
+class PostUpdate(LoginRequiredMixin, UpdateView):  # Наследуем миксин первым!
+    model = Post
+    template_name = 'news/post_edit.html'
+    fields = ['title', 'text', 'categories']
 
 # Существующие классы остаются
 class HomePage(TemplateView):

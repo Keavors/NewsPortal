@@ -38,7 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'news',
     'django_filters',
-    'widget_tweaks'
+    'widget_tweaks',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'NewsPortal.urls'
@@ -126,3 +132,18 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+LOGIN_URL = '/accounts/login/'  # Куда перенаправлять неавторизованных пользователей
+LOGIN_REDIRECT_URL = '/'        # После успешного входа
+LOGOUT_REDIRECT_URL = '/'       # После выхода
+
+# Настройки allauth
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Отключите подтверждение почты (опционально)
+ACCOUNT_EMAIL_REQUIRED = True        # Обязательная почта при регистрации
+
+SITE_ID = 1

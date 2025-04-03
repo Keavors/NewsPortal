@@ -1,3 +1,4 @@
+{% load auth_extras %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +32,11 @@
                         <li class="nav-item {% if '/news/' in request.path %}active{% endif %}">
                             <a class="nav-link" href="/news/">News</a>
                         </li>
+                        {% if user.is_authenticated and not user|in_group:'authors' %}
+                        <li class="nav-item">
+                            <a href="{% url 'become_author' %}" class="nav-link btn btn-success">Стать автором</a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
