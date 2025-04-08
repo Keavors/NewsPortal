@@ -31,6 +31,7 @@ def notify_subscribers(sender, instance, created, **kwargs):
             )
             msg.attach_alternative(html_content, "text/html")
             msg.send()
+
 User = get_user_model()
 
 @receiver(post_save, sender=User)

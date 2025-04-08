@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+from django.urls import reverse
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -41,6 +44,20 @@ class Post(models.Model):
     def dislike(self):
         self.rating -= 1
         self.save()
+
+    def clean(self):
+        if self.post_type == 'news':
+            user_posts_today = Post.objects.filter(
+                author=self.author,
+                created_at__date=timezone.now().date(),
+                post_type='news'
+            ).exclude(pk=self.pk).count()
+
+            if user_posts_today >= 3:
+                raise ValidationError('Нельзя публиковать более 3 новостей в сутки!')
+
+    def get_absolute_url(self):
+        return reverse('news_detail', args=[str(self.id)])
 
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

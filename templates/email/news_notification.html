@@ -1,0 +1,11 @@
+<!-- templates/email/news_notification.html -->
+<!DOCTYPE html>
+<html>
+<body>
+    <h3>Здравствуйте, {{ user.username }}!</h3>
+    <p>В вашем любимом разделе появилась новость:</p>
+    <h4>{{ post.title }}</h4>
+    <p>{{ post.text|truncatechars:50 }}</p>
+    <a href="http://127.0.0.1:8000{{ post.get_absolute_url }}">Читать полностью →</a>
+</body>
+</html>
