@@ -1,5 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.models import User
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    subscribers = models.ManyToManyField(User, related_name='subscribed_categories')
+
+    def __str__(self):
+        return self.name
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -12,8 +20,6 @@ class Author(models.Model):
         self.rating = post_rating + comment_rating + post_comments_rating
         self.save()
 
-class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
 
 class Post(models.Model):
     POST_TYPES = [('article', 'Статья'), ('news', 'Новость')]

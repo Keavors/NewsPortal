@@ -147,3 +147,17 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'  # Отключите подтвержден
 ACCOUNT_EMAIL_REQUIRED = True        # Обязательная почта при регистрации
 
 SITE_ID = 1
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'ваш_email@yandex.ru'  # Замените на ваш email
+EMAIL_HOST_PASSWORD = 'ваш_пароль'      # Пароль от почты
+
+# Настройки allauth для обязательной верификации email
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True  # Активация при переходе по ссылке
+LOGIN_REDIRECT_URL = '/'

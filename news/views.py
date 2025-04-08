@@ -5,10 +5,24 @@ from django.core.paginator import Paginator
 from .models import Post, Author
 from .filters import PostFilter
 from .forms import PostForm
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import Category
+
+@login_required
+def subscribe_category(request, category_id):
+    category = Category.objects.get(id=category_id)
+    category.subscribers.add(request.user)
+    return JsonResponse({'status': 'subscribed'})
+
+@login_required
+def unsubscribe_category(request, category_id):
+    category = Category.objects.get(id=category_id)
+    category.subscribers.remove(request.user)
+    return JsonResponse({'status': 'unsubscribed'})
 
 class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     permission_required = 'news.change_post'

@@ -1,7 +1,8 @@
 from django.urls import path
+from django.urls import include
 from .views import (
     NewsList, NewsDetail, PostSearch,
-    NewsCreate, ArticleCreate, PostUpdate, PostDelete, become_author
+    NewsCreate, ArticleCreate, PostUpdate, PostDelete, become_author, subscribe_category, unsubscribe_category
 )
 
 urlpatterns = [
@@ -21,4 +22,9 @@ urlpatterns = [
     path('articles/<int:pk>/delete/', PostDelete.as_view(), name='article_delete'),
 
     path('become-author/', become_author, name='become_author'),
+
+    path('category/<int:category_id>/subscribe/', subscribe_category, name='subscribe_category'),
+    path('category/<int:category_id>/unsubscribe/', unsubscribe_category, name='unsubscribe_category'),
+
+    path('accounts/', include('allauth.urls')),
 ]
