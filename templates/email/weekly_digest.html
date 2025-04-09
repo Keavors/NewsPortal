@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h3>Здравствуйте, {{ user.username }}!</h3>
+    <p>За последнюю неделю в ваших подписках появилось {{ posts|length }} новостей:</p>
+
+    {% for post in posts %}
+    <div style="margin-bottom: 20px; border-bottom: 1px solid #eee;">
+        <h4>{{ post.title }}</h4>
+        <p>{{ post.text|truncatechars:100 }}</p>
+        <a href="http://127.0.0.1:8000{{ post.get_absolute_url }}">Читать →</a>
+    </div>
+    {% endfor %}
+</body>
+</html>

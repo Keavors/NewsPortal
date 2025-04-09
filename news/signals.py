@@ -1,14 +1,18 @@
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .tasks import send_notification
 from .models import Post
 
 
 @receiver(post_save, sender=Post)
 def notify_subscribers(sender, instance, created, **kwargs):
+    if created and instance.post_type == 'news':
+        send_notification.delay(instance.id)  # Асинхронный вызов
     if created:
         categories = instance.categories.all()
         subscribers = User.objects.filter(
