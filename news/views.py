@@ -1,5 +1,3 @@
-# news/views.py
-from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
@@ -13,6 +11,29 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Category
 from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+
+class ArticleDetailView(DetailView):
+    model = Post
+    template_name = 'articles/article_detail.html'
+    context_object_name = 'article'
+
+    @method_decorator(cache_page(300))  # 5 минут
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+class ArticleList(ListView):
+    model = Post
+    template_name = 'articles/article_list.html'
+    context_object_name = 'articles'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Post.objects.filter(post_type='article').order_by('-created_at')
+
+    @method_decorator(cache_page(300))  # 5 минут
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 @login_required
 def subscribe_category(request, category_id):

@@ -2,13 +2,25 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from .tasks import send_notification
 from .models import Post
-from django.core.cache import cache
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.core.cache import cache
+
+
+@receiver([post_save, post_delete], sender=Post)
+def invalidate_article_cache(sender, instance, **kwargs):
+    if instance.post_type == 'article':
+        # Удаляем кэш детальной страницы
+        cache.delete(f'article_detail:{instance.id}')
+
+        # Удаляем кэш списка статей
+        cache.delete_pattern('*.articles.list.*')  # Для cache_page
+
+        # Удаляем кэш связанных категорий
+        for category in instance.categories.all():
+            cache.delete(f'category_{category.id}_articles')
 
 
 @receiver([post_save, post_delete], sender=Post)
