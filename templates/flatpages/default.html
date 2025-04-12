@@ -1,3 +1,4 @@
+{% load cache %}
 {% load auth_extras %}
 {% load static %}
 <!DOCTYPE html>
@@ -14,7 +15,7 @@
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
     </head>
     <body>
-        <!-- Responsive navbar-->
+        {% cache 900 navigation request.user.username %}
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
             <div class="container">
                 <a class="navbar-brand" href="/">News Portal</a>
@@ -41,6 +42,7 @@
                 </div>
             </div>
         </nav>
+        {% endcache %}
 
         <!-- Page content-->
         <div class="container">
@@ -57,5 +59,12 @@
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        {% cache 86400 footer %}  <!-- 24 часа -->
+        <footer class="mt-5">
+            <div class="container">
+                <p class="text-center">&copy; News Portal {% now "Y" %}</p>
+            </div>
+        </footer>
+        {% endcache %}
     </body>
 </html>

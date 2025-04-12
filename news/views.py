@@ -1,4 +1,5 @@
 # news/views.py
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
@@ -11,6 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Category
+from django.views.decorators.cache import cache_page
 
 @login_required
 def subscribe_category(request, category_id):
@@ -36,9 +38,12 @@ def become_author(request):
     return redirect('news_list')
 
 
-# Существующие классы остаются
 class HomePage(TemplateView):
     template_name = 'flatpages/index.html'
+
+    @method_decorator(cache_page(60))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
 
 class NewsList(ListView):
@@ -51,11 +56,19 @@ class NewsList(ListView):
     def get_queryset(self):
         return Post.objects.filter(post_type='news').order_by('-created_at')
 
+    @method_decorator(cache_page(300))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
 
 class NewsDetail(DetailView):
     model = Post
     template_name = 'news/news_detail.html'
     context_object_name = 'news'
+
+    @method_decorator(cache_page(300))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
 
 # Новые классы добавляем в конец файла
