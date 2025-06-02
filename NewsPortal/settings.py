@@ -24,6 +24,136 @@ SECRET_KEY = 'django-insecure-e54+iavba@z7^x0yp9#x2_hu752x0=fz_jbv8h&0@m=7j8u1=j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+ADMINS = [
+    ('Example Name', 'example_email@example.com'),
+]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console_formatter': {
+            'format': '{asctime} {levelname} {message}',
+            'style': '{',
+        },
+        'console_warning_formatter': {
+            'format': '{asctime} {levelname} {pathname} {message}',
+            'style': '{',
+        },
+        'console_error_formatter': {
+            'format': '{asctime} {levelname} {pathname} {message}\n{exc_info}',
+            'style': '{',
+        },
+        'general_file_formatter': {
+            'format': '{asctime} {levelname} {module} {message}',
+            'style': '{',
+        },
+        'errors_file_formatter': {
+            'format': '{asctime} {levelname} {message} {pathname}\n{exc_info}',
+            'style': '{',
+        },
+        'security_file_formatter': {
+            'format': '{asctime} {levelname} {module} {message}',
+            'style': '{',
+        },
+        'mail_formatter': {
+            'format': '{asctime} {levelname} {message} {pathname}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_formatter', # Базовый форматтер для DEBUG и INFO
+        },
+        'console_warning': { # Отдельный обработчик для WARNING и выше с pathname
+            'level': 'WARNING',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_warning_formatter',
+        },
+        'console_error': { # Отдельный обработчик для ERROR и CRITICAL со стэком
+            'level': 'ERROR',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_error_formatter',
+        },
+        'general_file': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'general.log'),
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'general_file_formatter',
+        },
+        'errors_file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'errors.log'),
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'errors_file_formatter',
+        },
+        'security_file': {
+            'level': 'INFO', # По условию, тут могут быть INFO, но в логгере django.security по умолчанию идут WARNING и выше
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'security.log'),
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'security_file_formatter',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'mail_formatter',
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'console_warning', 'console_error', 'general_file'],
+            'level': 'DEBUG', # Устанавливаем уровень, чтобы сообщения доходили до обработчиков
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['errors_file', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False, # Важно, чтобы избежать дублирования с 'django' логгером
+        },
+        'django.server': {
+            'handlers': ['errors_file', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.template': {
+            'handlers': ['errors_file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['errors_file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['security_file'],
+            'level': 'INFO', # Чтобы ловить все сообщения от этого логгера
+            'propagate': False,
+        },
+    }
+}
+
 ALLOWED_HOSTS = []
 
 
@@ -86,9 +216,13 @@ WSGI_APPLICATION = 'NewsPortal.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
 }
 
 
