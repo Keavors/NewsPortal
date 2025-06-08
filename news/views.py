@@ -1,17 +1,30 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
+import models
 from .models import Post, Author
 from .filters import PostFilter
 from .forms import PostForm
 from django.contrib.auth.models import Group
-from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Category
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import TimezoneForm
+
+@login_required
+def set_timezone(request):
+    if request.method == 'POST':
+        form = TimezoneForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = TimezoneForm(instance=request.user)
+    return render(request, 'users/timezone.html', {'form': form})
 
 class ArticleDetailView(DetailView):
     model = Post
@@ -143,3 +156,12 @@ class PostDelete(DeleteView):
     model = Post
     template_name = 'news/post_delete.html'
     success_url = reverse_lazy('news_list')
+
+from django.utils.translation import gettext_lazy as _
+
+class Post(models.Model):
+    title = models.CharField(_('Title'), max_length=200)
+    text = models.TextField(_('Text'))
+
+    def __str__(self):
+        return _('Post: %(title)s') % {'title': self.title}

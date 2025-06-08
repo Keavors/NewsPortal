@@ -1,5 +1,12 @@
 from django import forms
 from .models import Post
+from django import forms
+from .models import User
+
+class TimezoneForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['timezone']
 
 class PostForm(forms.ModelForm):
     class Meta:

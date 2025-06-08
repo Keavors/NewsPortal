@@ -3,6 +3,19 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.urls import reverse
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+class User(AbstractUser):
+    timezone = models.CharField(
+        max_length=50,
+        default='Europe/Moscow',
+        choices=[
+            ('Europe/Moscow', 'Москва (UTC+3)'),
+            ('Europe/London', 'Лондон (UTC+0)'),
+            ('America/New_York', 'Нью-Йорк (UTC-5)'),
+        ]
+    )
 
 
 class Category(models.Model):
@@ -77,3 +90,24 @@ class Comment(models.Model):
     def dislike(self):
         self.rating -= 1
         self.save()
+
+from django.utils.translation import gettext_lazy as _
+
+class Post(models.Model):
+    title = models.CharField(_('Title'), max_length=200)
+    text = models.TextField(_('Text'))
+
+    def __str__(self):
+        return _('Post: %(title)s') % {'title': self.title}
+
+# news/models.py
+from django.db import models
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    # Автоматически добавится name_en для английского
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    text = models.TextField()
+    # Автоматически добавятся title_en и text_en

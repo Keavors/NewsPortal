@@ -10824,3 +10824,12 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+.dark-theme {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.light-theme {
+    background-color: #ffffff;
+    color: #000000;
+}
